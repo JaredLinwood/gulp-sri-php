@@ -104,10 +104,10 @@ function processScripts(orig) {
 
 function rewriteTag(cont,text,attr) {
   var newText = text.replace(/ integrity="(.*?)"/g, '').replace(/ crossorigin="(.*?)"/g, '');
+  var crossorigin = attr.crossorigin ?? "anonymous";
+
   var add = " integrity=\""+attr.integrity+"\"";
-  if(!attr.crossorigin) {
-    add += " crossorigin=\"anonymous\"";
-  }
+  add += " crossorigin=\""+crossorigin+"\"";
   var tag = newText.replace(/\s{0,}\/{0,1}>/,add+">");
   return cont.replace(text, tag);
 }
