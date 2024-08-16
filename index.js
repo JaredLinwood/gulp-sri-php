@@ -62,16 +62,14 @@ function processStylesheets(orig) {
     var text = res[0];
     var attr = extractAttributes(text);
     if(attr.href) {
-      if(!attr.integrity) {
-        var path = calculatePath(attr.href);
-        if(path) {
-          var hash = calculateHash(path);
-          if(hash) {
-            attr.integrity = hash;
-            cont = rewriteTag(cont,text,attr);
-            if(options.verbose) {
-              console.log("[gulp-sri-php@"+version+"] hashed: "+attr.href+" ("+hash+")");
-            }
+      var path = calculatePath(attr.href);
+      if(path) {
+        var hash = calculateHash(path);
+        if(hash) {
+          attr.integrity = hash;
+          cont = rewriteTag(cont,text,attr);
+          if(options.verbose) {
+            console.log("[gulp-sri-php@"+version+"] hashed: "+attr.href+" ("+hash+")");
           }
         }
       }
@@ -88,16 +86,14 @@ function processScripts(orig) {
     var text = res[0];
     var attr = extractAttributes(text);
     if(attr.src) {
-      if(!attr.integrity) {
-        var path = calculatePath(attr.src);
-        if(path) {
-          var hash = calculateHash(path);
-          if(hash) {
-            attr.integrity = hash;
-            cont = rewriteTag(cont,text,attr);
-            if(options.verbose) {
-              console.log("[gulp-sri-php@"+version+"] hashed: "+attr.src+" ("+hash+")");
-            }
+      var path = calculatePath(attr.src);
+      if(path) {
+        var hash = calculateHash(path);
+        if(hash) {
+          attr.integrity = hash;
+          cont = rewriteTag(cont,text,attr);
+          if(options.verbose) {
+            console.log("[gulp-sri-php@"+version+"] hashed: "+attr.src+" ("+hash+")");
           }
         }
       }
@@ -107,12 +103,13 @@ function processScripts(orig) {
 }
 
 function rewriteTag(cont,text,attr) {
+  var newText = text.replace(/ integrity="(.*?)"/g, '').replace(/ crossorigin="(.*?)"/g, '');
   var add = " integrity=\""+attr.integrity+"\"";
   if(!attr.crossorigin) {
     add += " crossorigin=\"anonymous\"";
   }
-  var tag = text.replace(/\s{0,}\/{0,1}>/,add+">");
-  return cont.replace(text,tag);
+  var tag = newText.replace(/\s{0,}\/{0,1}>/,add+">");
+  return cont.replace(text, tag);
 }
 function extractAttributes(text) {
   var att = [];
